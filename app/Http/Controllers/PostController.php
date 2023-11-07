@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUpdatePost;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -18,14 +19,14 @@ class PostController extends Controller{
         return view('admin/posts/create');  // Retorna a view create
     }
 
-    public function store(Request $request){
+    public function store(StoreUpdatePost $request){
 
         // Post::create([
         //     'title' => $request->title,
         //     'content' => $request->content
         // ]);
 
-        Post::create($request->all());  // É passado um array contendo os valores do formulário
+        Post::create($request->all());  // É passado um array contendo os valores do formulário. A função 'all()' retorna todos os valores dos inputs de um request
 
         return redirect()->route('posts.index');    // Redireciona para a index
     }
