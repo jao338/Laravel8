@@ -28,14 +28,16 @@ class PostController extends Controller{
 
         Post::create($request->all());  // É passado um array contendo os valores do formulário. A função 'all()' retorna todos os valores dos inputs de um request
 
-        return redirect()->route('posts.index');    // Redireciona para a index
+        return redirect()
+            ->route('posts.index')
+            ->with('message', 'Post criado com sucesso');    // Redireciona para a index e exibe uma mensagem com uma session flash
     }
 
     public function show($id){
 
         // $post = Post::where('id', $id)->first(); Retorna o primeiro registro de um array
         if(!$post = Post::find($id)){
-            return redirect()->route('posts.indeex');
+            return redirect()->route('posts.index');
         }
         
         return view('admin/posts/show', compact('post'));
@@ -50,6 +52,29 @@ class PostController extends Controller{
         
         // 'with' cria uma session flash
         return redirect()->route('posts.index')->with('message', 'Post deletado com sucesso');
+    }
+
+    public function edit($id){
+
+        if(!$post = Post::find($id)){
+            return redirect()->back();
+        }
+        
+        return view('admin/posts/edit', compact('post'));
+    }
+
+    public function update(StoreUpdatePost $request, $id){
+
+        if(!$post = Post::find($id)){
+            return redirect()->back();
+        }
+        
+        $post->update($request->all());
+
+        return redirect()
+            ->route('posts.index')
+            ->with('message', 'Post atualizado com sucesso');
+
     }
 
 }
