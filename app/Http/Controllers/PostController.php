@@ -31,4 +31,25 @@ class PostController extends Controller{
         return redirect()->route('posts.index');    // Redireciona para a index
     }
 
+    public function show($id){
+
+        // $post = Post::where('id', $id)->first(); Retorna o primeiro registro de um array
+        if(!$post = Post::find($id)){
+            return redirect()->route('posts.indeex');
+        }
+        
+        return view('admin/posts/show', compact('post'));
+    }
+
+    public function destroy($id){
+        if(!$post = Post::find($id)){
+            return redirect()->route('posts.index');
+        }
+
+        $post->delete();
+        
+        // 'with' cria uma session flash
+        return redirect()->route('posts.index')->with('message', 'Post deletado com sucesso');
+    }
+
 }
