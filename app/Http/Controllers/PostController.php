@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdatePost;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class PostController extends Controller{
     
@@ -12,7 +13,7 @@ class PostController extends Controller{
 
         $posts = Post::orderBy('id', 'ASC')->paginate();  //  Exibe a paginação de 15 registros ordenado pelo id, do menor para o maior
 
-        $posts = Post::latest()->paginate();    //  Exibe a paginação de 15 registros ordenado pelo mais recente
+        $posts = Post::latest()->paginate(1);    //  Exibe a paginação de 15 registros ordenado pelo mais recente
 
         return view('admin/posts/index', compact('posts')); // É passado como parametro para a view um objeto 'Post' convertido em array
     }
@@ -76,6 +77,18 @@ class PostController extends Controller{
         return redirect()
             ->route('posts.index')
             ->with('message', 'Post atualizado com sucesso');
+
+    }
+
+    public function search(Request $request){
+
+        $filters = $request->except('_token');
+        
+        $posts = Post::where('title', 'LIKE', "%{$request->search}%")
+                            ->orWhere('content', 'LIKE', "%{$request->search}%")
+                            ->paginate(1);
+
+        return view('admin/posts/index', compact('posts', 'filters'));
 
     }
 

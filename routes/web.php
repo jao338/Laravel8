@@ -5,6 +5,7 @@ use App\Http\Controllers\{
 };
 use Illuminate\Support\Facades\Route;
 
+Route::any('/posts/search', [PostController::class, 'search'])->name('posts.search');
 Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
 
 Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');

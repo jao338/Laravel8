@@ -10,6 +10,12 @@
     </div>
 @endif
 
+<form action="{{ route('posts.search') }}" method="post">
+    @csrf
+    <input type="text" name="search" id="" placeholder="Filtrar">
+    <button type="submit">Filtrar</button>
+</form>
+
 @foreach ($posts as $post)
     <p>
         {{ $post->title }} 
@@ -24,4 +30,12 @@
 
 <hr>
 
-{{ $posts->links() }}
+@if (isset($filters))
+
+    {{ $posts->appends($filters)->links() }}
+
+@else
+    
+    {{ $posts->links() }}
+
+@endif
