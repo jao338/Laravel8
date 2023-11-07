@@ -21,3 +21,7 @@
     </p>
     {{-- Caso seja necessário passar mais de um parametro para a rota, use um array da seguinte forma: {{ route('posts.show', ['id' => $post->id, 'title' -> $post->title]) }} --}}
 @endforeach
+
+<hr>
+
+{{ $posts->links() }}

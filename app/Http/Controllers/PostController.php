@@ -10,7 +10,9 @@ class PostController extends Controller{
     
     public function index(){
 
-        $posts = Post::get();
+        $posts = Post::orderBy('id', 'ASC')->paginate();  //  Exibe a paginação de 15 registros ordenado pelo id, do menor para o maior
+
+        $posts = Post::latest()->paginate();    //  Exibe a paginação de 15 registros ordenado pelo mais recente
 
         return view('admin/posts/index', compact('posts')); // É passado como parametro para a view um objeto 'Post' convertido em array
     }
