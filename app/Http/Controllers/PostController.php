@@ -86,7 +86,7 @@ class PostController extends Controller{
 
         $data = $request->all();    //  A função 'all()' retorna todos os valores dos inputs de um request
 
-        if($request->image->isValid()){
+        if($request->image && $request->image->isValid()){
 
             if (Storage::exists($post->image)) {
                 Storage::delete($post->image);
