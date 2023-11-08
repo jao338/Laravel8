@@ -11,5 +11,5 @@ class Post extends Model
 
     protected $table = 'posts';
 
-    protected $fillable = ['title', 'content']; //  Define quais campos devem ser preenchidos no bando do dados. Caso não exista esse atributo, uma exceção acontece
+    protected $fillable = ['title', 'content', 'image']; //  Define quais campos devem ser preenchidos no bando do dados. Caso não exista esse atributo, uma exceção acontece
 }
