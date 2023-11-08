@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdatePost;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Redis;
 
 class PostController extends Controller{
@@ -24,12 +25,18 @@ class PostController extends Controller{
 
     public function store(StoreUpdatePost $request){
 
-        // Post::create([
-        //     'title' => $request->title,
-        //     'content' => $request->content
-        // ]);
+        $data = $request->all();    //  A função 'all()' retorna todos os valores dos inputs de um request
 
-        Post::create($request->all());  // É passado um array contendo os valores do formulário. A função 'all()' retorna todos os valores dos inputs de um request
+        if($request->image->isValid()){
+
+            $nameFile = Str::of($request->title)->slug('-').'.'.$request->image->getClientOriginalExtension();    //  Define um novo nome para a imagem com base no título, excluindo caracteres especias, removendo espaços e deixando em minúsculo. Bem como adiciona a extensão original do arquivo
+
+            $image = $request->image->storeAs('posts', $nameFile);   //  É feito o upload da imagem para o storage, que possui um link simbólico que aponta a para pasta 'public'
+            $data['image'] = $image;    //  É passado a imagem para o array a imagem
+
+        }
+
+        Post::create($data);  // É passado um array contendo os valores do formulário.
 
         return redirect()
             ->route('posts.index')
@@ -40,41 +47,41 @@ class PostController extends Controller{
 
         // $post = Post::where('id', $id)->first(); Retorna o primeiro registro de um array
         if(!$post = Post::find($id)){
-            return redirect()->route('posts.index');
+            return redirect()->route('posts.index');    //  Caso não encontre nenhum registro, redireciona para a index
         }
         
-        return view('admin/posts/show', compact('post'));
+        return view('admin/posts/show', compact('post'));   //  Retorna a view 'show.blade.php' e passa o array 'post'
     }
 
     public function destroy($id){
         if(!$post = Post::find($id)){
-            return redirect()->route('posts.index');
+            return redirect()->route('posts.index');    //  Caso não encontre nenhum registro, redireciona para a index
         }
 
-        $post->delete();
+        $post->delete();    //  Caso encontre, apaga o resgistro
         
         // 'with' cria uma session flash
-        return redirect()->route('posts.index')->with('message', 'Post deletado com sucesso');
+        return redirect()->route('posts.index')->with('message', 'Post deletado com sucesso');  //  Redireciona para a index e exibe uma mensagem com uma session flash
     }
 
     public function edit($id){
 
         if(!$post = Post::find($id)){
-            return redirect()->back();
+            return redirect()->back();  //  Caso não encontre o registro, redireciona de volta para a página anterior
         }
         
-        return view('admin/posts/edit', compact('post'));
+        return view('admin/posts/edit', compact('post'));   //  Caso contrário, redireciona para a view 'edit.blade.php' passando o array 'post'
     }
 
     public function update(StoreUpdatePost $request, $id){
 
         if(!$post = Post::find($id)){
-            return redirect()->back();
+            return redirect()->back();  //  Caso não encontre nenhum registro, redireciona de volta para a página anterior
         }
         
-        $post->update($request->all());
+        $post->update($request->all()); //  Atualiza o registo no bando de dados. É passado um array com os valores dos inputs($request)
 
-        return redirect()
+        return redirect()   //  Redireciona para a index e exibe uma mensagem com uma session flash
             ->route('posts.index')
             ->with('message', 'Post atualizado com sucesso');
 
@@ -82,9 +89,9 @@ class PostController extends Controller{
 
     public function search(Request $request){
 
-        $filters = $request->except('_token');
+        $filters = $request->except('_token');  //  Define um array com todos os valore dos campos, exceto o token. Não fazer isso, gera uma exception
         
-        $posts = Post::where('title', 'LIKE', "%{$request->search}%")
+        $posts = Post::where('title', 'LIKE', "%{$request->search}%")   //  Realiza uma 
                             ->orWhere('content', 'LIKE', "%{$request->search}%")
                             ->paginate();
 
