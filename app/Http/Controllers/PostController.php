@@ -7,6 +7,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller{
     
@@ -58,6 +59,10 @@ class PostController extends Controller{
             return redirect()->route('posts.index');    //  Caso não encontre nenhum registro, redireciona para a index
         }
 
+        if (Storage::exists($post->image)) {
+            Storage::delete($post->image);
+        }
+
         $post->delete();    //  Caso encontre, apaga o resgistro
         
         // 'with' cria uma session flash
@@ -78,8 +83,23 @@ class PostController extends Controller{
         if(!$post = Post::find($id)){
             return redirect()->back();  //  Caso não encontre nenhum registro, redireciona de volta para a página anterior
         }
+
+        $data = $request->all();    //  A função 'all()' retorna todos os valores dos inputs de um request
+
+        if($request->image->isValid()){
+
+            if (Storage::exists($post->image)) {
+                Storage::delete($post->image);
+            }
+
+            $nameFile = Str::of($request->title)->slug('-').'.'.$request->image->getClientOriginalExtension();    //  Define um novo nome para a imagem com base no título, excluindo caracteres especias, removendo espaços e deixando em minúsculo. Bem como adiciona a extensão original do arquivo
+
+            $image = $request->image->storeAs('posts', $nameFile);   //  É feito o upload da imagem para o storage, que possui um link simbólico que aponta a para pasta 'public'
+            $data['image'] = $image;    //  É passado a imagem para o array a imagem
+
+        }
         
-        $post->update($request->all()); //  Atualiza o registo no bando de dados. É passado um array com os valores dos inputs($request)
+        $post->update($data); //  Atualiza o registo no bando de dados. 
 
         return redirect()   //  Redireciona para a index e exibe uma mensagem com uma session flash
             ->route('posts.index')
