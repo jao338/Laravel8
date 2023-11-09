@@ -1,8 +1,10 @@
-@extends('admin/layouts/app')   {{-- Define qual template será utilizado --}}
+{{-- Extende um modelo blade --}}
+@extends('admin/layouts/app')
 
+{{-- Define o titulo com a section 'title' --}}
 @section('title', 'Listagem dos posts')
 
-{{-- Atribui esse conteúdo onde houver 'content' --}}
+{{-- Define o conteudo da section 'content' --}}
 @section('content')
     <a href="{{ route('posts.create') }}">Novo post</a> 
     {{-- <a href="/routes/create">Novo post</a> --}}
@@ -17,15 +19,17 @@
     @endif
 
     <form action="{{ route('posts.search') }}" method="post">
-        @csrf
+        @csrf   {{-- Diretiva do token --}}
         <input type="text" name="search" id="" placeholder="Filtrar">
         <button type="submit">Filtrar</button>
     </form>
 
+    {{-- Loop nos $posts --}}
     @foreach ($posts as $post)
         <p>
             <img src="{{ url("storage/{$post->image}") }}" alt="{{ $post->title }}" style="max-width: 100px;">
 
+            {{-- Exibe o título e dois links, um para ver mais detalhes e outro para editar o registro --}}
             {{ $post->title }} 
             
                 [ 
@@ -38,12 +42,15 @@
 
     <hr>
 
+    {{-- Caso exista $filters --}}
     @if (isset($filters))
 
+        {{-- 'links()' renderiza um link adequado para cada consulta --}}
         {{ $posts->appends($filters)->links() }}
 
     @else
-        
+
+        {{-- 'links()' renderiza um link adequado para cada consulta --}}
         {{ $posts->links() }}
 
     @endif

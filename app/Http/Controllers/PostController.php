@@ -59,11 +59,12 @@ class PostController extends Controller{
             return redirect()->route('posts.index');    //  Caso não encontre nenhum registro, redireciona para a index
         }
 
+        //  Ao apagar um registro, verifica se existe uma imagem salva no storage, caso ela exista ela também é apagada
         if (Storage::exists($post->image)) {
             Storage::delete($post->image);
         }
 
-        $post->delete();    //  Caso encontre, apaga o resgistro
+        $post->delete();    //  Caso encontre o registro, apaga o resgistro
         
         // 'with' cria uma session flash
         return redirect()->route('posts.index')->with('message', 'Post deletado com sucesso');  //  Redireciona para a index e exibe uma mensagem com uma session flash
@@ -88,6 +89,7 @@ class PostController extends Controller{
 
         if($request->image && $request->image->isValid()){
 
+            //  Ao atualizar um registro, verifica se existe já existe uma imagem salva no storage, caso ela exista ela é apagada
             if (Storage::exists($post->image)) {
                 Storage::delete($post->image);
             }
@@ -111,11 +113,11 @@ class PostController extends Controller{
 
         $filters = $request->except('_token');  //  Define um array com todos os valore dos campos, exceto o token. Não fazer isso, gera uma exception
         
-        $posts = Post::where('title', 'LIKE', "%{$request->search}%")   //  Realiza uma 
+        $posts = Post::where('title', 'LIKE', "%{$request->search}%")   //  Realiza um SELECT pelo título e outro pelo conteúdo
                             ->orWhere('content', 'LIKE', "%{$request->search}%")
                             ->paginate();
 
-        return view('admin/posts/index', compact('posts', 'filters'));
+        return view('admin/posts/index', compact('posts', 'filters'));  //  Retorna a view index, passando o array 'posts' e os filtros
 
     }
 

@@ -26,6 +26,7 @@ class StoreUpdatePost extends FormRequest
     {
         $id = $this->segment(2);
 
+        //  Define as regras de exceção do SQL
         $rules = [
             'title' => [
                 'required',
@@ -42,6 +43,7 @@ class StoreUpdatePost extends FormRequest
             'image' => ['required', 'image']
         ];
 
+        //  Verifica se o método de envio é do tipo PUT(update)
         if($this->method() == 'PUT'){
             $rules['image'] = ['nullable', 'image'];
         }
