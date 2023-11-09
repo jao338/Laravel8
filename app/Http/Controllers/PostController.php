@@ -117,7 +117,7 @@ class PostController extends Controller{
                             ->orWhere('content', 'LIKE', "%{$request->search}%")
                             ->paginate();
 
-        return view('admin/posts/index', compact('posts', 'filters'));  //  Retorna a view index, passando o array 'posts' e os filtros
+        return view('admin/posts/index', compact('posts', 'filters'));  //  Retorna a view index, passando 'posts' e 'filters'
 
     }
 

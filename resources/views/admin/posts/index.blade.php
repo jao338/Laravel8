@@ -45,6 +45,7 @@
     {{-- Caso exista $filters --}}
     @if (isset($filters))
 
+        {{-- appends() define um array de paginação personalizado --}}
         {{-- 'links()' renderiza um link adequado para cada consulta --}}
         {{ $posts->appends($filters)->links() }}
 
